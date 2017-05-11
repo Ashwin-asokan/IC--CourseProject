@@ -247,10 +247,66 @@ function test_square() {
     x.update(6);
     assert.equal(square.force(), 6 * 6,"square should be 6*6 now");
 }
+function sortNumber(a,b) {
+    return a - b;
+}
+function merge(left, right) {
+    var result = [];
+ 
+    while (left.length && right.length) {
+        if (left[0].force() <= right[0].force()) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+    while (left.length) 
+        result.push(left.shift());
+ 
+    while (right.length)
+        result.push(right.shift());
+ 
+    return result;
+}
+function mergeSort(arr) {
+    if (arr.length < 2)
+        return arr;
+ 
+    var middle = parseInt(arr.length / 2);
+    var left   = arr.slice(0, middle);
+    var right  = arr.slice(middle, arr.length);
+
+    var lazy_left = new Lazy(mergeSort(left));
+    var lazy_right = new Lazy(mergeSort(right));
+ 
+    return new Lazy(merge(lazy_left.force(), lazy_right.force())).force();
+}
+function test_merge_sort(){
+    var input = [34,203,3,746,200,984,198,764,9];
+    var a = input.map(function(x) {
+        return new Lazy(x);
+    });
+    var b = mergeSort(a);
+    var output = b.map(function(x) {
+        return x.force();
+    });
+    assert.deepEqual(output, input.sort(sortNumber),"Sorted output should match");
+}
+function factorial(n) {
+  if (n === 0) {
+    return 1;
+  }
+  return n * new Lazy(factorial(n - 1)).force();
+}
+function test_factorial() {
+    var input = new Lazy(3);
+    var output = new Lazy(factorial(input.force()));
+    assert.equal(output.force(), 3 * 2 * 1,"factorial should be 3*2*1 now");
+}
 test_5_plus_7();
 test_42_div_1();
 test_simple();
 //test_a_b_plus_c_update_a_b();
 test_tree_sum_1_2_3_4_commute();
-var a = [new Lazy(34), new Lazy(203), new Lazy(3), new Lazy(746), new Lazy(200), new Lazy(984), 
-new Lazy(198), new Lazy(764), new Lazy(9)];
+test_merge_sort();
+test_factorial();
