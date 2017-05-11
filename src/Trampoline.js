@@ -3,7 +3,7 @@
     Memoize thunks, maintain dependency graph and evaluates on demand. Does in order traversal of 
     dependencies and evaluates all dependent nodes for every change. 
     Tries to trampoline (http://raganwald.com/2013/03/28/trampolines-in-javascript.html) thunks to do 
-    better tail calls.
+    better tail calls evaluation.
  */
 function isGenerator(fn) {
    return fn.constructor.name === 'GeneratorFunction';
@@ -11,10 +11,6 @@ function isGenerator(fn) {
 var get_params = require('get-parameter-names');
 var pretty = require('js-object-pretty-print').pretty;
 class Partial {
-    /*
-    Partial(func, args) - new function with partial application
-    of the given arguments.
-    */
     constructor(func,args) {
         console.log("start constructing Partial:" + func);
         if(!(func instanceof Function)){throw "the first argument must be callable";}
@@ -174,7 +170,7 @@ class Trampolining {
 
 stack = [];
 memo_table = {};
-lazy_uninitialized = "lazy_uninitialized";
+uninitialized = "uninitialized";
 None = "None";
 
 class Dependency {
@@ -196,7 +192,7 @@ class Lazy {
             }
             else {
                 this.thunk = thunk;
-                this.value = lazy_uninitialized;
+                this.value = uninitialized;
                 memo_table[thunk] = this;
             }
         }
@@ -221,7 +217,7 @@ class Lazy {
     }
     is_forced() {
         console.log("is_forced Lazy:");
-        return (this.dependencies.length == 0 && this.value != lazy_uninitialized);
+        return (this.dependencies.length == 0 && this.value != uninitialized);
     }
     update(fn) {
         console.log("start update Lazy:" + fn);
@@ -274,7 +270,7 @@ class Lazy {
         console.log("start _evaluate Lazy:");
         stack.append(this);
         this.dependencies = [];
-        this.value = lazy_uninitialized;
+        this.value = uninitialized;
         box = [];
         this.bind(box.append);
         this.notify(yield Ycall(this.thunk));

@@ -11,10 +11,6 @@ function isGenerator(fn) {
 var get_params = require('get-parameter-names')
 var assert = require('assert');
 class Partial {
-    /*
-    Partial(func, args) - new function with partial application
-    of the given arguments.
-    */
     constructor(func,args) {
         if(!(func instanceof Function)){throw "the first argument must be callable";}
         this.func = func
@@ -85,7 +81,7 @@ class Memo extends Partial {
 lazy_change_propagation_level = 0
 stack = []
 memo_table = {}
-lazy_uninitialized = "lazy_uninitialized"
+uninitialized = "uninitialized"
 None = "None"
 
 class Dependency {
@@ -105,7 +101,7 @@ class Lazy {
                 }
                 else {
                     this.thunk = thunk;
-                    this.value = lazy_uninitialized;
+                    this.value = uninitialized;
                     memo_table[thunk.hash] = this;
                 }
         }
@@ -179,7 +175,7 @@ class Lazy {
         return this.value;
     }
     is_forced() {
-        return (this.dependencies.length == 0 && this.value != lazy_uninitialized);
+        return (this.dependencies.length == 0 && this.value != uninitialized);
     }
     force() {
         var result;

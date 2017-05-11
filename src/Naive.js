@@ -75,7 +75,7 @@ class Memo extends Partial {
 
 stack = []
 memo_table = {}
-lazy_uninitialized = "lazy_uninitialized"
+uninitialized = "uninitialized"
 None = "None"
 
 class Dependency {
@@ -94,7 +94,7 @@ class Lazy {
             }
             else {
                 this.thunk = thunk;
-                this.value = lazy_uninitialized;
+                this.value = uninitialized;
                 memo_table[thunk.hash] = this;
             }
         }
@@ -155,7 +155,7 @@ class Lazy {
         return this.value;
     }
     is_forced() {
-        return (this.dependencies.length == 0 && this.value != lazy_uninitialized);
+        return (this.dependencies.length == 0 && this.value != uninitialized);
     }
     force() {
         var result;
