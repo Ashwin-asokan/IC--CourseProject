@@ -8,7 +8,7 @@ All version, maintain memo table, lookup thunks and evaluates on demand.
 a similar fashion. Have doubts about using class for the overall first class function flows at the
 end. Gave up. Might look into this after comfortable with first two parts.
 
-How to Run:
+How to Run:  
 Install Node JS (https://nodejs.org/en/)  
 node Naive.js
 
