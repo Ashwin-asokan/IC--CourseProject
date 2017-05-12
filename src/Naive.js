@@ -200,12 +200,12 @@ function test_42_div_1() {
     nom  = new Lazy(42);
     den  = new Lazy(1);
     div  = new Lazy( function(){return nom.force() / den.force()});
-    root = new Lazy( function(){ if (den.force() == 0) { return 0; } else { return div.force(); } });
-    assert.equal(root.force(), 42,"Root should be 42 now");
+    roote = new Lazy( function(){ if (den.force() == 0) { return 0; } else { return div.force(); } });
+    assert.equal(roote.force(), 42,"Root should be 42 now");
     den.update(0);
-    assert.equal(root.force(), 0,"Root should be 0 now");
+    assert.equal(roote.force(), 0,"Root should be 0 now");
     den.update(1);
-    assert.equal(root.force(), 42,"Root should be 42 now");
+    assert.equal(roote.force(), 42,"Root should be 42 now");
 }
 function test_simple() {
     x = new Lazy(1);

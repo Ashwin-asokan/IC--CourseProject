@@ -9,7 +9,7 @@ a similar fashion. Have doubts about using class for the overall first class fun
 end. Gave up. Might look into this after comfortable with first two parts.
 
 How to Run:
-Install Node JS (https://nodejs.org/en/)
+Install Node JS (https://nodejs.org/en/)  
 node Naive.js
 
 Have few simple test cases working at the end of the file. Need to test the flow a bit closely. For now
