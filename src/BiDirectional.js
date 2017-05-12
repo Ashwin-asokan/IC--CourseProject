@@ -1,9 +1,7 @@
 /*
     A bit more faithful Implementation - Uses few ideas from Adapton (http://dl.acm.org/citation.cfm?id=2594324) 
     Memoize thunks, maintain dependency graph and evaluates on demand. Keep tracks of dependencies on 
-    either side of edges, keep track of dirty flag & selectively traverse the graph. 
-    Still being worked upon, doesn't work as expected. 
-    Some problem in following dirty flag. looking into that.
+    either side of edges, keep track of dirty flag & selectively traverse the graph.
  */
 function isGenerator(fn) {
    return fn.constructor.name === 'GeneratorFunction';
@@ -143,8 +141,8 @@ class Lazy {
                     stack.push({"node":node, "dependencies":dependencies});
                     node = dependency.node;
                     if (node.dependencies.length > 0) {
-                            dependencies = [].push(node.dependencies);
-                        }
+                        dependencies = node.dependencies.slice().reverse();
+                    }
                     else {
                         dependencies = [];
                     }
@@ -155,7 +153,7 @@ class Lazy {
             }
             else {
                 if (node.thunk && dependencies.length == 0) {
-                    return node.evaluate();
+                    node.evaluate();
                 }
                 while (stack.length > 0) {
                     var element = stack.pop();
@@ -165,9 +163,6 @@ class Lazy {
                         break;
                     }
                     this.evaluate();
-                    if (this == node) {
-                        dependencies = [];
-                    }
                 }
             }
         }
@@ -193,7 +188,7 @@ class Lazy {
         return result;
     }
     update(fn) {
-        var dirty;
+        var dirty = false;
         if (this.thunk) {
             delete memo_table[this.thunk.hash];
         }
