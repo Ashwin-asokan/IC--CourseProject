@@ -91,7 +91,7 @@ class Lazy {
         if (fn instanceof Function) {
             var thunk = new Memo(fn, args)
             if (thunk.hash in memo_table) {
-                return memo_table[thunk];
+                return memo_table[thunk.hash];
             }
             else {
                 this.thunk = thunk;
@@ -103,7 +103,6 @@ class Lazy {
             this.thunk = null;
             this.value = fn;
         }
-        this.binders = [];
         this.dependencies = [];
         return this;
     }
