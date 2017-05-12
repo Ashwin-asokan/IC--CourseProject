@@ -5,6 +5,7 @@
  */
 var get_params = require('get-parameter-names')
 var assert = require('assert');
+var pretty = require('js-object-pretty-print').pretty;
 class Partial {
     constructor(func,args) {
         if(!(func instanceof Function)){throw "the first argument must be callable";}
@@ -123,7 +124,7 @@ class Lazy {
         var dependencies = this.dependencies.slice().reverse();
         while (stack.length > 0 || dependencies.length > 0) {
             if (dependencies.length > 0) {
-                stack.push([node, dependencies]);
+                stack.push({"node": node, "dependencies" : dependencies});
                 node = dependencies[dependencies.length-1].node;
                 if (node in visited) {
                     dependencies = [];
@@ -131,7 +132,7 @@ class Lazy {
                 else {
                     visited.add(node);
                     if (node.dependencies.length > 0) {
-                        dependencies = [].push(node.dependencies);
+                        dependencies = node.dependencies.slice().reverse();
                     }
                     else {
                         dependencies = [];
@@ -140,15 +141,16 @@ class Lazy {
             }
             else {
                 if (node.thunk && dependencies.length == 0) {
-                    return node.evaluate();
+                    node.evaluate();
                 }
                 while (stack.length > 0) {
-                    [node, dependencies] = stack.pop();
+                    var element = stack.pop();
+                    [node, dependencies] = [element["node"],element["dependencies"]];
                     var dependency = dependencies.pop();
                     if (dependency.node.value == dependency.value) {
                         break;
                     }
-                    return this.evaluate();
+                    this.evaluate();
                 }
             }
         }
@@ -306,7 +308,7 @@ function test_factorial() {
 test_5_plus_7();
 test_42_div_1();
 test_simple();
-//test_a_b_plus_c_update_a_b();
+test_a_b_plus_c_update_a_b();
 test_tree_sum_1_2_3_4_commute();
 test_merge_sort();
 test_factorial();
